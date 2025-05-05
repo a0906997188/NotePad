@@ -52,11 +52,15 @@ namespace NotePad
         private void InitializeFontStyleComboBox()
         {
             // 將不同的字體樣式添加到字體樣式選擇框中
-            comboBoxStyle.Items.Add(FontStyle.Regular.ToString());   // 正常
-            comboBoxStyle.Items.Add(FontStyle.Bold.ToString());      // 粗體
-            comboBoxStyle.Items.Add(FontStyle.Italic.ToString());    // 斜體
-            comboBoxStyle.Items.Add(FontStyle.Underline.ToString()); // 底線
-            comboBoxStyle.Items.Add(FontStyle.Strikeout.ToString()); // 刪除線
+            foreach(FontStyle style in Enum.GetValues(typeof(FontStyle)))
+            {
+                comboBoxStyle.Items.Add(style.ToString());
+            }
+            //comboBoxStyle.Items.Add(FontStyle.Regular.ToString());   // 正常
+            //comboBoxStyle.Items.Add(FontStyle.Bold.ToString());      // 粗體
+            //comboBoxStyle.Items.Add(FontStyle.Italic.ToString());    // 斜體
+            //comboBoxStyle.Items.Add(FontStyle.Underline.ToString()); // 底線
+            //comboBoxStyle.Items.Add(FontStyle.Strikeout.ToString()); // 刪除線
                                                                      // 設置預設選中的項目為第一個樣式，即正常字體
             comboBoxStyle.SelectedIndex = 0;
         }
