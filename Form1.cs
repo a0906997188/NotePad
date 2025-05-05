@@ -145,51 +145,50 @@ namespace NotePad
             }
         }
         // 全域變數
-        private Stack<string> textHistory = new Stack<string>();
-        private const int MaxHistoryCount = 10; // 最多紀錄10個紀錄
+        private List<string> textHistoryList = new List<string>();
+        private const int MaxHistoryCount = 10;
+        private bool isUndo = false;
 
         private void rtbText_TextChanged(object sender, EventArgs e)
         {
-            // 將當前的文本內容加入堆疊
-            textHistory.Push(rtbText.Text);
-
-            // 確保堆疊中只保留最多10個紀錄
-            if (textHistory.Count > MaxHistoryCount)
+            if (!isUndo)
             {
-                // 用一個臨時堆疊，將除了最下面一筆的文字記錄之外，將文字紀錄堆疊由上而下，逐一移除再堆疊到臨時堆疊之中
-                Stack<string> tempStack = new Stack<string>();
-                for (int i = 0; i < MaxHistoryCount; i++)
+                // 將當前的文本內容加入清單尾端
+                textHistoryList.Add(rtbText.Text);
+
+                // 確保只保留最近的 MaxHistoryCount 筆記錄
+                if (textHistoryList.Count > MaxHistoryCount)
                 {
-                    tempStack.Push(textHistory.Pop());
+                    textHistoryList.RemoveAt(0); // 移除最舊的紀錄（清單第一筆）
                 }
-                textHistory.Clear(); // 清空堆疊
-                                     // 文字編輯堆疊紀錄清空之後，再將暫存堆疊（tempStack）中的資料，逐一放回到文字編輯堆疊紀錄
-                foreach (string item in tempStack)
-                {
-                    textHistory.Push(item);
-                }
+
+                UpdateListBox(); // 更新 ListBox 顯示
             }
-            UpdateListBox(); // 更新 ListBox          
         }
-        void UpdateListBox()
-        {
-            listUndo.Items.Clear(); // 清空 ListBox 中的元素
 
-            // 將堆疊中的內容逐一添加到 ListBox 中
-            foreach (string item in textHistory)
+        private void UpdateListBox()
+        {
+            listUndo.Items.Clear();
+
+            // 倒序顯示歷史記錄（最新在上）
+            for (int i = textHistoryList.Count - 1; i >= 0; i--)
             {
-                listUndo.Items.Add(item);
+                listUndo.Items.Add(textHistoryList[i]);
             }
         }
 
         private void btnUndo_Click(object sender, EventArgs e)
         {
-            if (textHistory.Count > 1)
+            isUndo = true;
+
+            if (textHistoryList.Count > 1)
             {
-                textHistory.Pop(); // 移除當前的文本內容
-                rtbText.Text = textHistory.Peek(); // 將堆疊頂部的文本內容設置為當前的文本內容                
+                textHistoryList.RemoveAt(textHistoryList.Count - 1); // 移除最新的編輯
+                rtbText.Text = textHistoryList[textHistoryList.Count - 1]; // 設定為前一筆紀錄
             }
-            UpdateListBox(); // 更新 ListBox
+
+            UpdateListBox();
+            isUndo = false;
         }
     }
 }

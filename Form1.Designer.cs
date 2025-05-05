@@ -81,7 +81,7 @@
             // 
             // btnUndo
             // 
-            this.btnUndo.Location = new System.Drawing.Point(326, 12);
+            this.btnUndo.Location = new System.Drawing.Point(311, 12);
             this.btnUndo.Name = "btnUndo";
             this.btnUndo.Size = new System.Drawing.Size(103, 58);
             this.btnUndo.TabIndex = 4;
