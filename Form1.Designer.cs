@@ -36,14 +36,16 @@
             this.listUndo = new System.Windows.Forms.ListBox();
             this.btnUndo = new System.Windows.Forms.Button();
             this.btnRedo = new System.Windows.Forms.Button();
-            this.comboBox1 = new System.Windows.Forms.ComboBox();
+            this.comboBoxFon = new System.Windows.Forms.ComboBox();
+            this.comboBoxSize = new System.Windows.Forms.ComboBox();
+            this.comboBoxStyle = new System.Windows.Forms.ComboBox();
             this.SuspendLayout();
             // 
             // btnOpen
             // 
-            this.btnOpen.Location = new System.Drawing.Point(47, 81);
+            this.btnOpen.Location = new System.Drawing.Point(592, 95);
             this.btnOpen.Name = "btnOpen";
-            this.btnOpen.Size = new System.Drawing.Size(103, 58);
+            this.btnOpen.Size = new System.Drawing.Size(168, 25);
             this.btnOpen.TabIndex = 0;
             this.btnOpen.Text = "開啟檔案";
             this.btnOpen.UseVisualStyleBackColor = true;
@@ -51,9 +53,9 @@
             // 
             // btnSave
             // 
-            this.btnSave.Location = new System.Drawing.Point(181, 81);
+            this.btnSave.Location = new System.Drawing.Point(592, 126);
             this.btnSave.Name = "btnSave";
-            this.btnSave.Size = new System.Drawing.Size(103, 58);
+            this.btnSave.Size = new System.Drawing.Size(168, 25);
             this.btnSave.TabIndex = 1;
             this.btnSave.Text = "存檔";
             this.btnSave.UseVisualStyleBackColor = true;
@@ -61,7 +63,7 @@
             // 
             // rtbText
             // 
-            this.rtbText.Location = new System.Drawing.Point(47, 174);
+            this.rtbText.Location = new System.Drawing.Point(36, 97);
             this.rtbText.Name = "rtbText";
             this.rtbText.Size = new System.Drawing.Size(534, 362);
             this.rtbText.TabIndex = 2;
@@ -76,16 +78,16 @@
             // 
             this.listUndo.FormattingEnabled = true;
             this.listUndo.ItemHeight = 15;
-            this.listUndo.Location = new System.Drawing.Point(601, 174);
+            this.listUndo.Location = new System.Drawing.Point(592, 230);
             this.listUndo.Name = "listUndo";
-            this.listUndo.Size = new System.Drawing.Size(168, 364);
+            this.listUndo.Size = new System.Drawing.Size(168, 229);
             this.listUndo.TabIndex = 3;
             // 
             // btnUndo
             // 
-            this.btnUndo.Location = new System.Drawing.Point(335, 81);
+            this.btnUndo.Location = new System.Drawing.Point(592, 157);
             this.btnUndo.Name = "btnUndo";
-            this.btnUndo.Size = new System.Drawing.Size(103, 58);
+            this.btnUndo.Size = new System.Drawing.Size(168, 25);
             this.btnUndo.TabIndex = 4;
             this.btnUndo.Text = "復原上一部";
             this.btnUndo.UseVisualStyleBackColor = true;
@@ -93,21 +95,38 @@
             // 
             // btnRedo
             // 
-            this.btnRedo.Location = new System.Drawing.Point(478, 81);
+            this.btnRedo.Location = new System.Drawing.Point(592, 188);
             this.btnRedo.Name = "btnRedo";
-            this.btnRedo.Size = new System.Drawing.Size(103, 58);
+            this.btnRedo.Size = new System.Drawing.Size(168, 25);
             this.btnRedo.TabIndex = 5;
             this.btnRedo.Text = "重作下一步";
             this.btnRedo.UseVisualStyleBackColor = true;
             this.btnRedo.Click += new System.EventHandler(this.btnRedo_Click);
             // 
-            // comboBox1
+            // comboBoxFon
             // 
-            this.comboBox1.FormattingEnabled = true;
-            this.comboBox1.Location = new System.Drawing.Point(47, 24);
-            this.comboBox1.Name = "comboBox1";
-            this.comboBox1.Size = new System.Drawing.Size(129, 23);
-            this.comboBox1.TabIndex = 6;
+            this.comboBoxFon.FormattingEnabled = true;
+            this.comboBoxFon.Location = new System.Drawing.Point(36, 59);
+            this.comboBoxFon.Name = "comboBoxFon";
+            this.comboBoxFon.Size = new System.Drawing.Size(129, 23);
+            this.comboBoxFon.TabIndex = 6;
+            this.comboBoxFon.SelectedIndexChanged += new System.EventHandler(this.comboBoxFont);
+            // 
+            // comboBoxSize
+            // 
+            this.comboBoxSize.FormattingEnabled = true;
+            this.comboBoxSize.Location = new System.Drawing.Point(205, 59);
+            this.comboBoxSize.Name = "comboBoxSize";
+            this.comboBoxSize.Size = new System.Drawing.Size(129, 23);
+            this.comboBoxSize.TabIndex = 7;
+            // 
+            // comboBoxStyle
+            // 
+            this.comboBoxStyle.FormattingEnabled = true;
+            this.comboBoxStyle.Location = new System.Drawing.Point(386, 59);
+            this.comboBoxStyle.Name = "comboBoxStyle";
+            this.comboBoxStyle.Size = new System.Drawing.Size(129, 23);
+            this.comboBoxStyle.TabIndex = 8;
             // 
             // Form1
             // 
@@ -115,7 +134,9 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.SystemColors.ActiveCaption;
             this.ClientSize = new System.Drawing.Size(845, 573);
-            this.Controls.Add(this.comboBox1);
+            this.Controls.Add(this.comboBoxStyle);
+            this.Controls.Add(this.comboBoxSize);
+            this.Controls.Add(this.comboBoxFon);
             this.Controls.Add(this.btnRedo);
             this.Controls.Add(this.btnUndo);
             this.Controls.Add(this.listUndo);
@@ -138,7 +159,9 @@
         private System.Windows.Forms.ListBox listUndo;
         private System.Windows.Forms.Button btnUndo;
         private System.Windows.Forms.Button btnRedo;
-        private System.Windows.Forms.ComboBox comboBox1;
+        private System.Windows.Forms.ComboBox comboBoxFon;
+        private System.Windows.Forms.ComboBox comboBoxSize;
+        private System.Windows.Forms.ComboBox comboBoxStyle;
     }
 }
 

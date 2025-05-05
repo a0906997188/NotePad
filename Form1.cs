@@ -13,10 +13,54 @@ namespace NotePad
 {
     public partial class Form1 : Form
     {
+
         public Form1()
         {
             InitializeComponent();
+
+            // 加入以下三行
+            InitializeFontComboBox();
+            InitializeFontSizeComboBox();
+            InitializeFontStyleComboBox();
         }
+
+        // 初始化字體下拉選單
+        private void InitializeFontComboBox()
+        {
+            // 將所有系統字體名稱添加到字體選擇框中
+            foreach (FontFamily font in FontFamily.Families)
+            {
+                comboBoxFon.Items.Add(font.Name);
+            }
+            // 設置預設選中的項目為第一個字體
+            comboBoxFon.SelectedIndex = 0;
+        }
+
+        // 初始化字體大小下拉選單
+        private void InitializeFontSizeComboBox()
+        {
+            // 從8開始，每次增加2，直到72，將這些數值添加到字體大小選擇框中
+            for (int i = 8; i <= 72; i += 2)
+            {
+                comboBoxSize.Items.Add(i);
+            }
+            // 設置預設選中的項目為第三個大小，即12字體大小
+            comboBoxSize.SelectedIndex = 2;
+        }
+
+        // 初始化字體樣式下拉選單
+        private void InitializeFontStyleComboBox()
+        {
+            // 將不同的字體樣式添加到字體樣式選擇框中
+            comboBoxStyle.Items.Add(FontStyle.Regular.ToString());   // 正常
+            comboBoxStyle.Items.Add(FontStyle.Bold.ToString());      // 粗體
+            comboBoxStyle.Items.Add(FontStyle.Italic.ToString());    // 斜體
+            comboBoxStyle.Items.Add(FontStyle.Underline.ToString()); // 底線
+            comboBoxStyle.Items.Add(FontStyle.Strikeout.ToString()); // 刪除線
+                                                                     // 設置預設選中的項目為第一個樣式，即正常字體
+            comboBoxStyle.SelectedIndex = 0;
+        }
+
 
         private bool isUndoRedo = false;                           // 是否在回復或重作階段
         private Stack<string> undoStack = new Stack<string>();     // 回復堆疊
@@ -210,5 +254,9 @@ namespace NotePad
             }
         }
 
+        private void comboBoxFont(object sender, EventArgs e)
+        {
+
+        }
     }
 }
