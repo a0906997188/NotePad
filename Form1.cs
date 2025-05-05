@@ -11,12 +11,17 @@ using System.IO;
 
 namespace NotePad
 {
-    public partial class Form1: Form
+    public partial class Form1 : Form
     {
         public Form1()
         {
             InitializeComponent();
         }
+
+        private bool isUndoRedo = false;                           // 是否在回復或重作階段
+        private Stack<string> undoStack = new Stack<string>();     // 回復堆疊
+        private Stack<string> redoStack = new Stack<string>();     // 重作堆疊
+        private const int MaxHistoryCount = 10;                    // 最多紀錄10個紀錄
 
         private void btnOpen_Click(object sender, EventArgs e)
         {
@@ -33,7 +38,7 @@ namespace NotePad
 
             // 顯示對話方塊，並等待使用者選擇檔案
             DialogResult result = openFileDialog1.ShowDialog();
-            
+
             // 檢查使用者是否選擇了檔案
             if (result == DialogResult.OK)
             {
@@ -41,9 +46,7 @@ namespace NotePad
                 {
                     // 使用者在OpenFileDialog選擇的檔案
                     string selectedFileName = openFileDialog1.FileName;
-                    
 
-                    //1.第一種作法
                     //// 使用 FileStream 打開檔案
                     //// 建立一個檔案資料流，並且設定檔案名稱與檔案開啟模式為「開啟檔案」
                     //FileStream fileStream = new FileStream(selectedFileName, FileMode.Open, FileAccess.Read);
@@ -55,7 +58,6 @@ namespace NotePad
                     //fileStream.Close();
                     //streamReader.Close();
 
-                    //2.第二種作法
                     // 使用 using 與 FileStream 打開檔案
                     using (FileStream fileStream = new FileStream(selectedFileName, FileMode.Open, FileAccess.Read))
                     {
@@ -67,7 +69,6 @@ namespace NotePad
                         }
                     }
 
-                    //3.第三種作法
                     //// 更為簡單的做法，將檔案內容顯示到 RichTextBox 中
                     //string fileContent = File.ReadAllText(selectedFileName);
                     //rtbText.Text = fileContent;
@@ -80,13 +81,12 @@ namespace NotePad
             }
             else
             {
-                MessageBox.Show("使用者取消了選擇檔案操作。", "訊息", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+                MessageBox.Show("使用者取消了選擇檔案操作。", "訊息", MessageBoxButtons.OKCancel, MessageBoxIcon.Exclamation);
             }
         }
 
         private void btnSave_Click(object sender, EventArgs e)
         {
-        
             // 設置對話方塊標題
             saveFileDialog1.Title = "儲存檔案";
             // 設置對話方塊篩選器，限制使用者只能選擇特定類型的檔案
@@ -115,6 +115,7 @@ namespace NotePad
                     // 將 RichTextBox 中的文字寫入檔案中
                     byte[] data = Encoding.UTF8.GetBytes(rtbText.Text);
                     fileStream.Write(data, 0, data.Length);
+
                     //// 使用 using 與 FileStream 建立檔案，如果檔案已存在則覆寫
                     //using (fileStream = new FileStream(saveFileName, FileMode.Create, FileAccess.Write))
                     //{
@@ -131,7 +132,7 @@ namespace NotePad
                 catch (Exception ex)
                 {
                     // 如果發生錯誤，用 MessageBox 顯示錯誤訊息
-                    MessageBox.Show("儲存檔案時發生錯誤: " + ex.Message, "錯誤訊息", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    MessageBox.Show("儲存檔案時發生錯誤: " + ex.Message, "錯誤訊息", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
                 finally
                 {
@@ -141,55 +142,73 @@ namespace NotePad
             }
             else
             {
-                MessageBox.Show("使用者取消了儲存檔案操作。", "訊息", MessageBoxButtons.OK, MessageBoxIcon.Information);
-            }
-        }
-        // 全域變數
-        private List<string> textHistoryList = new List<string>();
-        private const int MaxHistoryCount = 10;
-        private bool isUndo = false;
-
-        private void rtbText_TextChanged(object sender, EventArgs e)
-        {
-            if (!isUndo)
-            {
-                // 將當前的文本內容加入清單尾端
-                textHistoryList.Add(rtbText.Text);
-
-                // 確保只保留最近的 MaxHistoryCount 筆記錄
-                if (textHistoryList.Count > MaxHistoryCount)
-                {
-                    textHistoryList.RemoveAt(0); // 移除最舊的紀錄（清單第一筆）
-                }
-
-                UpdateListBox(); // 更新 ListBox 顯示
-            }
-        }
-
-        private void UpdateListBox()
-        {
-            listUndo.Items.Clear();
-
-            // 倒序顯示歷史記錄（最新在上）
-            for (int i = textHistoryList.Count - 1; i >= 0; i--)
-            {
-                listUndo.Items.Add(textHistoryList[i]);
+                MessageBox.Show("使用者取消了儲存檔案操作。", "訊息", MessageBoxButtons.OKCancel, MessageBoxIcon.Exclamation);
             }
         }
 
         private void btnUndo_Click(object sender, EventArgs e)
         {
-            isUndo = true;
-
-            if (textHistoryList.Count > 1)
+            if (undoStack.Count > 1)
             {
-                textHistoryList.RemoveAt(textHistoryList.Count - 1); // 移除最新的編輯
-                rtbText.Text = textHistoryList[textHistoryList.Count - 1]; // 設定為前一筆紀錄
+                isUndoRedo = true;
+                redoStack.Push(undoStack.Pop()); // 將回復堆疊最上面的紀錄移出，再堆到重作堆疊
+                rtbText.Text = undoStack.Peek(); // 將回復堆疊最上面一筆紀錄顯示
+                UpdateListBox();
+                isUndoRedo = false;
             }
-
-            UpdateListBox();
-            isUndo = false;
         }
+
+        private void btnRedo_Click(object sender, EventArgs e)
+        {
+            if (redoStack.Count > 0)
+            {
+                isUndoRedo = true;
+                undoStack.Push(redoStack.Pop()); // 將重作堆疊最上面的紀錄移出，再堆到回復堆疊
+                rtbText.Text = undoStack.Peek(); // 將回復堆疊最上面一筆紀錄顯示
+                UpdateListBox();
+                isUndoRedo = false;
+            }
+        }
+
+        private void rtbText_TextChanged(object sender, EventArgs e)
+        {
+            // 只有當isUndo這個變數是false的時候，才能堆疊文字編輯紀錄
+            if (isUndoRedo == false)
+            {
+                undoStack.Push(rtbText.Text); // 將當前的文本內容加入堆疊
+                redoStack.Clear();            // 清空重作堆疊
+
+                // 確保堆疊中只保留最多10個紀錄
+                if (undoStack.Count > MaxHistoryCount)
+                {
+                    // 用一個臨時堆疊，將除了最下面一筆的文字記錄之外，將文字紀錄堆疊由上而下，逐一移除再堆疊到臨時堆疊之中
+                    Stack<string> tempStack = new Stack<string>();
+                    for (int i = 0; i < MaxHistoryCount; i++)
+                    {
+                        tempStack.Push(undoStack.Pop());
+                    }
+                    undoStack.Clear(); // 清空堆疊
+                                       // 文字編輯堆疊紀錄清空之後，再將暫存堆疊（tempStack）中的資料，逐一放回到文字編輯堆疊紀錄
+                    foreach (string item in tempStack)
+                    {
+                        undoStack.Push(item);
+                    }
+                }
+                UpdateListBox(); // 更新 ListBox
+            }
+        }
+
+        // 更新 ListBox
+        void UpdateListBox()
+        {
+            listUndo.Items.Clear(); // 清空 ListBox 中的元素
+
+            // 將堆疊中的內容逐一添加到 ListBox 中
+            foreach (string item in undoStack)
+            {
+                listUndo.Items.Add(item);
+            }
+        }
+
     }
 }
-
