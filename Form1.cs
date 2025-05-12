@@ -13,6 +13,7 @@ namespace NotePad
 {
     public partial class Form1 : Form
     {
+        
 
         public Form1()
         {
@@ -129,7 +130,7 @@ namespace NotePad
             }
             else
             {
-                MessageBox.Show("使用者取消了選擇檔案操作。", "訊息", MessageBoxButtons.OKCancel, MessageBoxIcon.Exclamation);
+                MessageBox.Show("使用者取消了選擇檔案操作。", "訊息", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
             }
         }
 
@@ -258,9 +259,48 @@ namespace NotePad
             }
         }
 
-        private void comboBoxFont(object sender, EventArgs e)
-        {
 
+        // 這個方法在 comboBox 的選項變更時觸發
+        private void comboBox_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            // 檢查當前選擇的文字是否有字型，如果有，則進行後續處理
+            if (rtbText.SelectionFont != null)
+            {
+                // 從下拉選單中獲取選擇的字型、大小和樣式
+                string selectedFont = comboBoxFon.SelectedItem?.ToString();
+                string selectedSizeStr = comboBoxSize.SelectedItem?.ToString();
+                string selectedStyleStr = comboBoxStyle.SelectedItem?.ToString();
+
+                // 確保字型、大小和樣式都已選擇
+                if (selectedFont != null && selectedSizeStr != null && selectedStyleStr != null)
+                {
+                    // 將選擇的大小字串轉換為浮點數
+                    float selectedSize = float.Parse(selectedSizeStr);
+                    // 將選擇的樣式字串轉換為 FontStyle 枚舉值
+                    FontStyle selectedStyle = (FontStyle)Enum.Parse(typeof(FontStyle), selectedStyleStr);
+
+                    // 獲取當前選擇的文字的字型
+                    Font currentFont = rtbText.SelectionFont;
+
+                    FontStyle newStyle = currentFont.Style;
+                    // 檢查是否需要應用新的樣式，並更新樣式
+                    if (comboBoxStyle.SelectedItem.ToString() == FontStyle.Bold.ToString())
+                        newStyle = FontStyle.Bold;
+                    else if (comboBoxStyle.SelectedItem.ToString() == FontStyle.Italic.ToString())
+                        newStyle = FontStyle.Italic;
+                    else if (comboBoxStyle.SelectedItem.ToString() == FontStyle.Underline.ToString())
+                        newStyle = FontStyle.Underline;
+                    else if (comboBoxStyle.SelectedItem.ToString() == FontStyle.Strikeout.ToString())
+                        newStyle = FontStyle.Strikeout;
+                    else
+                        newStyle = FontStyle.Regular;
+
+                    // 創建新的字型並應用到選擇的文字
+                    Font newFont = new Font(selectedFont, selectedSize, newStyle);
+                    rtbText.SelectionFont = newFont;
+                }
+            }
         }
+
     }
 }
